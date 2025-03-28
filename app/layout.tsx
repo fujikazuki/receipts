@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Receipt Scanner',
-  description: 'Scan and analyze your receipts',
+  description: 'Scan and analyze your receipts using AI',
 }
 
 export default function RootLayout({
