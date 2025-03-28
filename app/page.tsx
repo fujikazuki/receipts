@@ -35,7 +35,18 @@ export default function Home() {
 
     setIsLoading(true)
     try {
-      const response = await fetch('/api/analyze-receipt', {
+      // Check image size
+      const imageSize = image.length * 3/4; // Base64 is ~33% larger than binary
+      if (imageSize > 20 * 1024 * 1024) { // 20MB limit
+        throw new Error('Image size too large. Please use an image under 20MB.');
+      }
+
+      // Use the local API endpoint in development
+      const apiUrl = process.env.NODE_ENV === 'development' 
+        ? '/api/analyze-receipt'
+        : 'https://us-central1-receipts-87efd.cloudfunctions.net/analyzeReceipt';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,11 +54,17 @@ export default function Home() {
         body: JSON.stringify({ image }),
       })
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json()
       setAnalysisResult(data.text)
       setModalOpen(true)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error analyzing receipt:', error)
+      alert(error?.message || 'Failed to analyze receipt')
     } finally {
       setIsLoading(false)
     }
