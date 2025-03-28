@@ -43,3 +43,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# build output
+package-lock.json
+yarn.lock
+
+# CRA leftovers
+/src
+public/manifest.json
+public/logo*
+public/favicon.ico
